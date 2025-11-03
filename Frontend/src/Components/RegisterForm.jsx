@@ -20,7 +20,7 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/register", formData);
+      const res = await api.post("/auth/register", formData);
       setMessage(res.data.message);
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
