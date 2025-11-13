@@ -4,6 +4,7 @@ import connectDB from "./Config/db.js";
 import authRoutes from "./Routes/authRoutes.js";
 import cors from "cors";
 import dashboardRoutes from "./Routes/dashboardRoutes.js";
+import targetRoutes from "./Routes/targetRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/targets", targetRoutes);
 
 connectDB();
 
