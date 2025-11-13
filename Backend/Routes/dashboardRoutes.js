@@ -6,7 +6,7 @@ router.get("/stats", async (req, res) => {
     const dashboardData = {
       totalTargets: 1234,
       verifiedAssets: 1120,
-      lastScanDate: "2023-10-27T14:30:00",
+      lastScanDate: "2025-11-10T14:30:00",
       criticalVulns: 87,
       vulnerabilities: {
         critical: 87,
