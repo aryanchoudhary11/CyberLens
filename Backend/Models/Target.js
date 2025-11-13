@@ -10,8 +10,8 @@ const targetSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["active", "scanned", "vulnerable"],
-    default: "active",
+    enum: ["verified", "unverified", "vulnerable", "safe"],
+    default: "unverified",
   },
   addedBy: { type: String },
   createdAt: { type: Date, default: Date.now },
