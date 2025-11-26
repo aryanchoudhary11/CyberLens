@@ -1,0 +1,106 @@
+/* ----------- MAIN CONTAINER (COMPACT) ----------- */
+.support-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 20px 40px;       /* reduced from 40px 60px */
+  box-sizing: border-box;
+}
+
+/* ----------- HEADINGS ----------- */
+h2 {
+  font-size: 26px;          /* reduced from 32px */
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;          /* smaller text */
+  margin-bottom: 20px;      /* reduced spacing */
+}
+
+/* ----------- FORM GRID ----------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;                /* reduced from 30px */
+  margin-bottom: 15px;
+}
+
+/* ----------- FORM GROUP ----------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 4px;       /* tighter */
+  font-size: 14px;
+}
+
+input,
+select,
+textarea {
+  padding: 8px;             /* reduced padding */
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* ----------- TEXTAREA ----------- */
+textarea {
+  min-height: 80px;         /* smaller box */
+  resize: vertical;
+  margin-bottom: 10px;      /* reduced */
+}
+
+/* ----------- UPLOAD BOX ----------- */
+.upload-box {
+  width: 100%;
+  padding: 20px;            /* reduced from 40px */
+  border: 2px dashed #bbb;
+  border-radius: 8px;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-bottom: 15px;      /* reduced */
+}
+
+/* ----------- SUBMIT BUTTON ----------- */
+.submit-btn {
+  width: 100%;
+  padding: 10px;            /* reduced from 14px */
+  background: #007bff;
+  border: none;
+  color: white;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;      /* smaller */
+}
+
+.submit-btn:hover {
+  background: #0064d6;
+}
+
+/* ----------- CONTACT INFO ----------- */
+.contact-info {
+  margin-top: 10px;         /* reduced */
+  color: #444;
+  font-size: 13px;
+  line-height: 1.4;         /* tighter */
+}
+
+/* ----------- RESPONSIVE ----------- */
+@media (max-width: 768px) {
+  .support-container {
+    padding: 15px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
