@@ -44,14 +44,11 @@ export default function Dashboard() {
 
   return (
     <div className="flex bg-[#0f172a] min-h-screen text-white">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Dashboard Content */}
       <div className="flex-1 p-6 overflow-y-auto">
         <DashboardHeader />
 
-        {/* Top Stats Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-gray-900 border border-gray-800 p-5 rounded-2xl">
             <h3 className="text-sm text-gray-400">Total Targets</h3>

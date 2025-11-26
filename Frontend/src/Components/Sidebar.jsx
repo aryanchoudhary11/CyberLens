@@ -21,7 +21,7 @@ export default function Sidebar() {
       icon: <LayoutDashboard size={18} />,
       path: "/dashboard",
     },
-    { name: "Targets", icon: <Target size={18} /> },
+    { name: "Targets", icon: <Target size={18} />, path: "/targets" },
     { name: "Scans", icon: <Activity size={18} /> },
     { name: "Reports", icon: <FileText size={18} /> },
   ];
@@ -34,7 +34,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* 🔹 Mobile Top Bar */}
       <div className="bg-gray-900 text-white flex items-center justify-between px-5 py-3 md:hidden fixed top-0 left-0 right-0 z-40 shadow-md">
         <h1 className="text-xl font-bold text-blue-500">CyberLens</h1>
         <button
@@ -45,19 +44,16 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* 🔹 Sidebar (Desktop + Mobile Drawer) */}
       <div
         className={`fixed md:static top-0 left-0 h-full w-64 bg-gray-900 border-r border-gray-800 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out z-50 flex flex-col justify-between p-5 pt-20 md:pt-5`}
       >
-        {/* Sidebar Header (only on desktop) */}
         <div>
           <h1 className="hidden md:block text-2xl font-bold text-blue-500 mb-8">
             CyberLens
           </h1>
 
-          {/* Menu List */}
           <ul className="space-y-3">
             {menu.map((item, index) => (
               <li
@@ -75,7 +71,6 @@ export default function Sidebar() {
           </ul>
         </div>
 
-        {/* Settings + Logout */}
         <div className="mt-8 md:mt-100">
           <div className="flex items-center gap-3 text-gray-300 hover:text-blue-400 cursor-pointer mb-4">
             <Settings size={18} />
@@ -91,7 +86,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* 🔹 Overlay (Mobile) */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
