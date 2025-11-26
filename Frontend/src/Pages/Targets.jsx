@@ -11,6 +11,7 @@ export default function Targets() {
   const [showModal, setShowModal] = useState(false);
   const [editingTarget, setEditingTarget] = useState(null);
   const [editData, setEditData] = useState({ name: "", ip: "", type: "" });
+  const [verifyingId, setVerifyingId] = useState(null);
 
   const [newTarget, setNewTarget] = useState({
     name: "",
@@ -93,8 +94,21 @@ export default function Targets() {
     }
   };
 
-  const handleVerify = (id) => {
-    console.log("Verify logic here for:", id);
+  const handleVerify = async (id) => {
+    try {
+      setVerifyingId(id);
+      const res = await api.post(`/targets/${id}/verify`);
+      // update the target locally using response
+      setTargets((prev) =>
+        prev.map((t) => (t._id === id ? res.data.target || res.data : t))
+      );
+      // optionally show message
+      console.log("Verify result:", res.data);
+    } catch (err) {
+      console.error("Verification failed:", err?.response?.data || err.message);
+    } finally {
+      setVerifyingId(null);
+    }
   };
 
   const handleStartScan = (id) => {
@@ -197,8 +211,15 @@ export default function Targets() {
                               <button
                                 className="px-3 py-1 rounded-lg flex items-center gap-1 text-sm bg-yellow-600 hover:bg-yellow-700 text-white"
                                 onClick={() => handleVerify(t._id)}
+                                disabled={verifyingId === t._id}
                               >
-                                <ShieldCheck size={14} /> Verify Now
+                                {verifyingId === t._id ? (
+                                  "Verifying..."
+                                ) : (
+                                  <>
+                                    <ShieldCheck size={14} /> Verify Now
+                                  </>
+                                )}
                               </button>
                             ) : (
                               <button
