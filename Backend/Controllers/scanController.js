@@ -1,9 +1,9 @@
 import { execFile } from "child_process";
 import Scan from "../Models/Scan.js";
+import Target from "../Models/Target.js";
 import validator from "validator";
-import { parseNmapOutput } from "../utils/nmapParser.js";
 
-const scanCommands = {
+const nmapModes = {
   fast: ["-F"],
   service: ["-sV"],
   full: ["-sV", "-O", "-p-"],
@@ -11,53 +11,75 @@ const scanCommands = {
 
 export const startScan = async (req, res) => {
   try {
-    const { target, scanType = "fast" } = req.body;
+    const { targetId, tool, options } = req.body;
 
-    if (!target) {
-      return res.status(400).json({ message: "Target is required" });
+    if (!targetId || !tool) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
+
+    const targetDoc = await Target.findById(targetId);
+    if (!targetDoc) {
+      return res.status(404).json({ message: "Target not found" });
+    }
+
+    const target = targetDoc.ip;
 
     if (!validator.isIP(target) && !validator.isFQDN(target)) {
       return res.status(400).json({ message: "Invalid target format" });
     }
 
-    if (!scanCommands[scanType]) {
-      return res.status(400).json({ message: "Invalid scan type" });
+    // Only Nmap supported currently
+    if (tool !== "nmap") {
+      return res.status(400).json({ message: "Tool not supported yet" });
     }
 
-    // Create scan entry
+    const mode = options?.mode || "fast";
+    const nmapArgs = nmapModes[mode];
+
+    if (!nmapArgs) {
+      return res.status(400).json({ message: "Invalid Nmap mode" });
+    }
+
     const scan = await Scan.create({
+      targetId,
       target,
-      scanType,
+      scanType: mode,
       status: "running",
     });
 
-    execFile(
-      "nmap",
-      [...scanCommands[scanType], target],
-      async (error, stdout, stderr) => {
-        if (error) {
-          await Scan.findByIdAndUpdate(scan._id, {
-            status: "failed",
-          });
-          return;
-        }
-
-        const openPorts = parseNmapOutput(stdout);
-
+    execFile("nmap", [...nmapArgs, target], async (error, stdout, stderr) => {
+      if (error) {
         await Scan.findByIdAndUpdate(scan._id, {
-          openPorts,
-          rawOutput: stdout,
-          status: "completed",
+          status: "failed",
         });
-      },
-    );
+        return;
+      }
+
+      const openPorts = stdout
+        .split("\n")
+        .filter((line) => line.includes("/tcp") && line.includes("open"))
+        .map((line) => {
+          const parts = line.trim().split(/\s+/);
+          return {
+            port: parseInt(parts[0]),
+            service: parts[2],
+            version: parts.slice(3).join(" ") || "",
+          };
+        });
+
+      await Scan.findByIdAndUpdate(scan._id, {
+        openPorts,
+        rawOutput: stdout,
+        status: "completed",
+      });
+    });
 
     res.status(200).json({
       message: "Scan started",
       scanId: scan._id,
     });
   } catch (error) {
-    res.status(500).json({ message: "Scan failed", error });
+    console.error(error);
+    res.status(500).json({ message: "Scan failed" });
   }
 };

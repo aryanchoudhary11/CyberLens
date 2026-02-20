@@ -5,7 +5,6 @@ const scanSchema = new mongoose.Schema(
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Target",
-      required: true,
     },
     target: {
       type: String,
