@@ -83,3 +83,19 @@ export const startScan = async (req, res) => {
     res.status(500).json({ message: "Scan failed" });
   }
 };
+export const getScanById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const scan = await Scan.findById(id);
+
+    if (!scan) {
+      return res.status(404).json({ message: "Scan not found" });
+    }
+
+    res.status(200).json(scan);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch scan" });
+  }
+};
