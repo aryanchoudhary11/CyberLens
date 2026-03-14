@@ -21,9 +21,21 @@ export default function Sidebar() {
       icon: <LayoutDashboard size={18} />,
       path: "/dashboard",
     },
-    { name: "Targets", icon: <Target size={18} />, path: "/targets" },
-    { name: "Scans", icon: <Activity size={18} /> },
-    { name: "Reports", icon: <FileText size={18} /> },
+    {
+      name: "Targets",
+      icon: <Target size={18} />,
+      path: "/targets",
+    },
+    {
+      name: "Scans",
+      icon: <Activity size={18} />,
+      path: "/scans", // ✅ navigation added here
+    },
+    {
+      name: "Reports",
+      icon: <FileText size={18} />,
+      path: "/reports",
+    },
   ];
 
   const handleLogout = () => {
@@ -34,6 +46,7 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Mobile Header */}
       <div className="bg-gray-900 text-white flex items-center justify-between px-5 py-3 md:hidden fixed top-0 left-0 right-0 z-40 shadow-md">
         <h1 className="text-xl font-bold text-blue-500">CyberLens</h1>
         <button
@@ -44,6 +57,7 @@ export default function Sidebar() {
         </button>
       </div>
 
+      {/* Sidebar */}
       <div
         className={`fixed md:static top-0 left-0 h-full w-64 bg-gray-900 border-r border-gray-800 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -71,11 +85,13 @@ export default function Sidebar() {
           </ul>
         </div>
 
+        {/* Bottom section */}
         <div className="mt-8 md:mt-100">
           <div className="flex items-center gap-3 text-gray-300 hover:text-blue-400 cursor-pointer mb-4">
             <Settings size={18} />
             <span>Settings</span>
           </div>
+
           <button
             onClick={handleLogout}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
@@ -86,6 +102,7 @@ export default function Sidebar() {
         </div>
       </div>
 
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}

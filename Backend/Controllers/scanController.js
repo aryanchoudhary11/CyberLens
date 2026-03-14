@@ -99,3 +99,16 @@ export const getScanById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch scan" });
   }
 };
+
+export const getAllScans = async (req, res) => {
+  try {
+    const scans = await Scan.find()
+      .sort({ createdAt: -1 })
+      .select("_id target scanType status createdAt");
+
+    res.status(200).json(scans);
+  } catch (error) {
+    console.error("Error fetching scans:", error);
+    res.status(500).json({ message: "Failed to fetch scans" });
+  }
+};

@@ -6,6 +6,7 @@ import Targets from "./Pages/Targets";
 import EditProfile from "./pages/EditProfile";
 import ContactSupport from "./Pages/ContactSupport";
 import ScanResults from "./Pages/ScanResults";
+import ScanHistoryPage from "./Pages/ScanHistory";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/edit-profile" element={<EditProfile />} />
       <Route path="/contact-support" element={<ContactSupport />} />
       <Route path="/scan/:id" element={<ScanResults />} />
+      <Route path="/scans" element={<ScanHistoryPage />} />
     </Routes>
   );
 }
