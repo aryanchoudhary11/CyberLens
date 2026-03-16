@@ -5,16 +5,28 @@ const scanSchema = new mongoose.Schema(
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Target",
+      required: true,
     },
+
     target: {
       type: String,
       required: true,
     },
-    scanType: {
+
+    // Which tool is used
+    scanTool: {
+      type: String,
+      enum: ["nmap", "nuclei"],
+      required: true,
+    },
+
+    // Scan mode (only for nmap)
+    scanMode: {
       type: String,
       enum: ["fast", "service", "full"],
-      default: "fast",
+      default: null,
     },
+
     openPorts: [
       {
         port: Number,
@@ -22,7 +34,11 @@ const scanSchema = new mongoose.Schema(
         version: String,
       },
     ],
-    rawOutput: String,
+
+    rawOutput: {
+      type: String,
+    },
+
     status: {
       type: String,
       enum: ["pending", "running", "completed", "failed"],

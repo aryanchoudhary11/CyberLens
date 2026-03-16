@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Pencil, Trash2, Play, Plus, ShieldCheck } from "lucide-react";
+import { Pencil, Trash2, Play, Plus } from "lucide-react";
 import api from "../api/api";
 import Sidebar from "../Components/Sidebar";
 import ScanToolModal from "../Components/ScanToolModal";
@@ -17,6 +17,7 @@ export default function Targets() {
   const [selectedTargetId, setSelectedTargetId] = useState(null);
 
   const [editData, setEditData] = useState({ name: "", ip: "", type: "" });
+
   const [newTarget, setNewTarget] = useState({
     name: "",
     ip: "",
@@ -46,6 +47,7 @@ export default function Targets() {
 
   const indexOfLastTarget = currentPage * targetsPerPage;
   const indexOfFirstTarget = indexOfLastTarget - targetsPerPage;
+
   const currentTargets = filteredTargets.slice(
     indexOfFirstTarget,
     indexOfLastTarget,
@@ -66,11 +68,19 @@ export default function Targets() {
 
   const handleAddTarget = async (e) => {
     e.preventDefault();
+
     try {
       const res = await api.post("/targets", newTarget);
+
       setTargets([...targets, res.data]);
+
       setShowModal(false);
-      setNewTarget({ name: "", ip: "", type: "web" });
+
+      setNewTarget({
+        name: "",
+        ip: "",
+        type: "web",
+      });
     } catch (error) {
       console.error("Error adding new target:", error);
     }
@@ -78,6 +88,7 @@ export default function Targets() {
 
   const handleEdit = (target) => {
     setEditingTarget(target);
+
     setEditData({
       name: target.name,
       ip: target.ip,
@@ -87,11 +98,14 @@ export default function Targets() {
 
   const handleSaveEdit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await api.put(`/targets/${editingTarget._id}`, editData);
+
       setTargets(
         targets.map((t) => (t._id === editingTarget._id ? res.data : t)),
       );
+
       setEditingTarget(null);
     } catch (error) {
       console.error("Error updating target:", error);
@@ -101,7 +115,9 @@ export default function Targets() {
   const handleVerify = async (id) => {
     try {
       setVerifyingId(id);
+
       const res = await api.post(`/targets/${id}/verify`);
+
       setTargets((prev) =>
         prev.map((t) => (t._id === id ? res.data.target || res.data : t)),
       );
@@ -125,11 +141,13 @@ export default function Targets() {
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-lg">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">Manage Assets</h2>
+
             <button
               onClick={() => setShowModal(true)}
               className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center gap-2"
             >
-              <Plus size={16} /> Add New Asset
+              <Plus size={16} />
+              Add New Asset
             </button>
           </div>
 
@@ -143,12 +161,13 @@ export default function Targets() {
                 <thead>
                   <tr className="bg-gray-800 text-gray-400 text-sm uppercase">
                     <th className="p-4">Asset Name</th>
-                    <th className="p-4">IP Address</th>
+                    <th className="p-4">IP / Domain</th>
                     <th className="p-4">Type</th>
                     <th className="p-4">Status</th>
                     <th className="p-4 text-center">Actions</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {currentTargets.map((t) => (
                     <tr
@@ -156,8 +175,11 @@ export default function Targets() {
                       className="border-t border-gray-800 hover:bg-gray-800/60"
                     >
                       <td className="p-4">{t.name}</td>
+
                       <td className="p-4 text-gray-400">{t.ip}</td>
+
                       <td className="p-4 text-gray-400">{t.type}</td>
+
                       <td className="p-4 capitalize">
                         <span
                           className={`${
@@ -171,6 +193,7 @@ export default function Targets() {
                           ● {t.status}
                         </span>
                       </td>
+
                       <td className="p-4 text-center">
                         <div className="flex justify-center gap-3">
                           {t.status === "unverified" ? (
@@ -188,7 +211,8 @@ export default function Targets() {
                               className="px-3 py-1 rounded-lg flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700"
                               onClick={() => handleStartScan(t._id)}
                             >
-                              <Play size={14} /> Start Scan
+                              <Play size={14} />
+                              Start Scan
                             </button>
                           )}
 
@@ -215,6 +239,68 @@ export default function Targets() {
           )}
         </div>
       </div>
+
+      {/* Add Asset Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-gray-900 p-6 rounded-xl w-[400px] border border-gray-700">
+            <h3 className="text-lg font-semibold mb-4">Add New Asset</h3>
+
+            <form onSubmit={handleAddTarget} className="flex flex-col gap-4">
+              <input
+                type="text"
+                placeholder="Asset Name"
+                value={newTarget.name}
+                onChange={(e) =>
+                  setNewTarget({ ...newTarget, name: e.target.value })
+                }
+                className="bg-gray-800 p-2 rounded"
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="Domain or IP (example: scanme.nmap.org)"
+                value={newTarget.ip}
+                onChange={(e) =>
+                  setNewTarget({ ...newTarget, ip: e.target.value })
+                }
+                className="bg-gray-800 p-2 rounded"
+                required
+              />
+
+              <select
+                value={newTarget.type}
+                onChange={(e) =>
+                  setNewTarget({ ...newTarget, type: e.target.value })
+                }
+                className="bg-gray-800 p-2 rounded"
+              >
+                <option value="web">Web</option>
+                <option value="server">Server</option>
+                <option value="network">Network</option>
+              </select>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-3 py-2 bg-gray-700 rounded"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded"
+                >
+                  Add Asset
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Scan Tool Modal */}
       {showScanModal && (

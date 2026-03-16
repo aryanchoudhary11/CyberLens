@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     nmap \
     curl \
     unzip \
+    iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Nuclei using official install script
