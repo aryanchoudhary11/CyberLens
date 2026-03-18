@@ -7,26 +7,22 @@ const scanSchema = new mongoose.Schema(
       ref: "Target",
       required: true,
     },
-
     target: {
       type: String,
       required: true,
     },
-
-    // Which tool is used
     scanTool: {
       type: String,
-      enum: ["nmap", "nuclei"],
+      enum: ["nmap", "nuclei", "nikto", "whatweb", "subfinder", "sslyze"],
       required: true,
     },
-
-    // Scan mode (only for nmap)
     scanMode: {
       type: String,
       enum: ["fast", "service", "full"],
       default: null,
     },
 
+    // Nmap results
     openPorts: [
       {
         port: Number,
@@ -35,10 +31,30 @@ const scanSchema = new mongoose.Schema(
       },
     ],
 
+    // WhatWeb results
+    technologies: [
+      {
+        name: String,
+        version: String,
+        category: String,
+      },
+    ],
+
+    // Subfinder results
+    subdomains: [String],
+
+    // SSLyze results
+    sslInfo: {
+      grade: String,
+      protocol: String,
+      issuer: String,
+      expiry: Date,
+      issues: [String],
+    },
+
     rawOutput: {
       type: String,
     },
-
     status: {
       type: String,
       enum: ["pending", "running", "completed", "failed"],
