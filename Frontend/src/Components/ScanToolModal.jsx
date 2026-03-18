@@ -26,7 +26,6 @@ const ScanToolModal = ({ isOpen, onClose, targetId }) => {
 
       setToast("Scan started successfully 🚀");
 
-      // Navigate after small delay
       setTimeout(() => {
         navigate(`/scan/${res.data.scanId}`);
         onClose();
@@ -43,12 +42,14 @@ const ScanToolModal = ({ isOpen, onClose, targetId }) => {
       {toast && (
         <Toast message={toast} type="success" onClose={() => setToast(null)} />
       )}
+
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 animate-fadeIn">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-800">
             Select Scan Tool
           </h2>
+
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-red-500 text-lg"
@@ -59,22 +60,33 @@ const ScanToolModal = ({ isOpen, onClose, targetId }) => {
 
         {/* Tool Selection */}
         <div className="space-y-3">
+          {/* Nmap */}
           <label className="flex items-center space-x-3 cursor-pointer p-3 border rounded-lg hover:bg-gray-50 transition">
             <input
               type="radio"
               name="tool"
               value="nmap"
+              checked={selectedTool === "nmap"}
               onChange={() => setSelectedTool("nmap")}
               className="accent-blue-600"
             />
             <span className="font-medium text-gray-700">🔎 Nmap</span>
           </label>
 
-          <label className="flex items-center space-x-3 p-3 border rounded-lg opacity-50 cursor-not-allowed">
-            <input type="radio" disabled />
-            <span>🌐 Nuclei (Coming Soon)</span>
+          {/* Nuclei */}
+          <label className="flex items-center space-x-3 cursor-pointer p-3 border rounded-lg hover:bg-gray-50 transition">
+            <input
+              type="radio"
+              name="tool"
+              value="nuclei"
+              checked={selectedTool === "nuclei"}
+              onChange={() => setSelectedTool("nuclei")}
+              className="accent-blue-600"
+            />
+            <span className="font-medium text-gray-700">🌐 Nuclei</span>
           </label>
 
+          {/* SSL Scan placeholder */}
           <label className="flex items-center space-x-3 p-3 border rounded-lg opacity-50 cursor-not-allowed">
             <input type="radio" disabled />
             <span>🔐 SSL Scan (Coming Soon)</span>
@@ -105,6 +117,7 @@ const ScanToolModal = ({ isOpen, onClose, targetId }) => {
                     onChange={() => setNmapMode(mode.id)}
                     className="accent-blue-600"
                   />
+
                   <span className="text-gray-700">{mode.label}</span>
                 </label>
               ))}
