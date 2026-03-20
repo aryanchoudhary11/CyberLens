@@ -1,5 +1,5 @@
 import ping from "ping";
-import Target from "../models/Target.js";
+import Target from "../Models/Target.js";
 import fetch from "node-fetch";
 
 export const verifyTarget = async (req, res) => {

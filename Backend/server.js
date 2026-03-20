@@ -5,6 +5,7 @@ import authRoutes from "./Routes/authRoutes.js";
 import cors from "cors";
 import dashboardRoutes from "./Routes/dashboardRoutes.js";
 import targetRoutes from "./Routes/targetRoutes.js";
+import scanRoutes from "./Routes/ScanRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -12,7 +13,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/targets", targetRoutes);
+app.use("/api/scan", scanRoutes);
 
 connectDB();
 
