@@ -124,10 +124,11 @@ export const startScan = async (req, res) => {
     // --------------------------
     // NUCLEI SCAN
     // --------------------------
+    // ---- NUCLEI SCAN ----
     if (tool === "nuclei") {
       try {
         const nucleiRaw = await runNucleiScan(target);
-        const parsed = parseNucleiOutput(nucleiRaw);
+        const parsed = await parseNucleiOutput(nucleiRaw); // ← add await
 
         if (parsed.length > 0) {
           await Vulnerability.insertMany(

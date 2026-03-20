@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import api from "../api/api";
+import { generateScanPDF } from "../../utils/generatePDF";
 
 export default function ScanResults() {
   const { id } = useParams();
@@ -80,7 +81,18 @@ export default function ScanResults() {
 
   return (
     <div className="p-10 bg-[#0f172a] min-h-screen text-white">
-      <h1 className="text-2xl font-semibold mb-4">Scan Results</h1>
+      {/* Title + Download Button */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-semibold">Scan Results</h1>
+        {scan.status === "completed" && (
+          <button
+            onClick={() => generateScanPDF(scan)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"
+          >
+            ⬇️ Download PDF
+          </button>
+        )}
+      </div>
 
       {/* Scan Info Bar */}
       <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 flex flex-wrap gap-6 text-sm">
@@ -193,26 +205,68 @@ export default function ScanResults() {
                       key={index}
                       className={`border rounded-lg p-4 ${severityColor(vuln.severity)}`}
                     >
-                      <div className="flex justify-between mb-1">
-                        <p className="font-medium text-white">{vuln.name}</p>
-                        <span
-                          className={`text-xs px-2 py-1 rounded uppercase font-bold ${severityBadge(vuln.severity)}`}
-                        >
-                          {vuln.severity}
-                        </span>
+                      {/* Title + Badges */}
+                      <div className="flex justify-between items-start mb-2">
+                        <p className="font-medium text-white flex-1 mr-2">
+                          {vuln.name}
+                        </p>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {vuln.cvssScore && (
+                            <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded font-mono">
+                              CVSS {vuln.cvssScore}
+                            </span>
+                          )}
+                          <span
+                            className={`text-xs px-2 py-1 rounded uppercase font-bold ${severityBadge(vuln.severity)}`}
+                          >
+                            {vuln.severity}
+                          </span>
+                        </div>
                       </div>
+
+                      {/* CVE Badge */}
+                      {vuln.cveId && (
+                        <span className="inline-block text-xs bg-red-900/40 text-red-300 border border-red-700/60 px-2 py-0.5 rounded mb-2 font-mono">
+                          🔴 {vuln.cveId}
+                        </span>
+                      )}
+
+                      {/* Description */}
                       {vuln.description && (
-                        <p className="text-sm text-gray-300 mb-1">
+                        <p className="text-sm text-gray-300 mb-2">
                           {vuln.description}
                         </p>
                       )}
+
+                      {/* URL */}
                       {vuln.url && (
-                        <p className="text-xs text-cyan-400">🔗 {vuln.url}</p>
+                        <p className="text-xs text-cyan-400 mb-1">
+                          🔗 {vuln.url}
+                        </p>
                       )}
+
+                      {/* Template ID */}
                       {vuln.templateId && (
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 mb-1">
                           Template: {vuln.templateId}
                         </p>
+                      )}
+
+                      {/* References */}
+                      {vuln.reference?.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {vuln.reference.slice(0, 3).map((ref, i) => (
+                            <a
+                              key={i}
+                              href={ref}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-blue-400 hover:underline"
+                            >
+                              📖 Ref {i + 1}
+                            </a>
+                          ))}
+                        </div>
                       )}
                     </div>
                   ))}
@@ -239,10 +293,12 @@ export default function ScanResults() {
                       key={index}
                       className={`border rounded-lg p-4 ${severityColor(vuln.severity)}`}
                     >
-                      <div className="flex justify-between mb-1">
-                        <p className="font-medium text-white">{vuln.name}</p>
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="font-medium text-white flex-1 mr-2">
+                          {vuln.name}
+                        </p>
                         <span
-                          className={`text-xs px-2 py-1 rounded uppercase font-bold ${severityBadge(vuln.severity)}`}
+                          className={`text-xs px-2 py-1 rounded uppercase font-bold shrink-0 ${severityBadge(vuln.severity)}`}
                         >
                           {vuln.severity}
                         </span>
