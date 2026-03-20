@@ -30,6 +30,9 @@ RUN apt-get update && apt-get install -y \
     libio-socket-ssl-perl \
     && rm -rf /var/lib/apt/lists/*
 
+# Update Nikto database
+RUN nikto -update || true
+
 # Install WhatWeb manually from GitHub
 RUN git clone https://github.com/urbanadventurer/WhatWeb.git /opt/whatweb \
     && ln -s /opt/whatweb/whatweb /usr/local/bin/whatweb \

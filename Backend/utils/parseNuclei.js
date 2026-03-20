@@ -10,13 +10,13 @@ export const parseNucleiOutput = async (data) => {
     try {
       const json = JSON.parse(line);
 
-      // Extract CVSS score from nuclei output directly
+      // Extract CVSS score directly from nuclei output
       const cvssScore =
         json.info?.classification?.["cvss-score"] ||
         json.info?.metadata?.["cvss-score"] ||
         null;
 
-      // Extract CVE ID from nuclei output directly
+      // Extract CVE ID directly from nuclei output
       const cveIds = json.info?.classification?.["cve-id"] || [];
       const cveId =
         Array.isArray(cveIds) && cveIds.length > 0 ? cveIds[0] : null;

@@ -128,7 +128,7 @@ export const startScan = async (req, res) => {
     if (tool === "nuclei") {
       try {
         const nucleiRaw = await runNucleiScan(target);
-        const parsed = await parseNucleiOutput(nucleiRaw); // ← add await
+        const parsed = await parseNucleiOutput(nucleiRaw); // ← await added
 
         if (parsed.length > 0) {
           await Vulnerability.insertMany(
@@ -157,7 +157,7 @@ export const startScan = async (req, res) => {
     if (tool === "nikto") {
       try {
         const raw = await runNiktoScan(target);
-        const parsed = parseNiktoOutput(raw);
+        const parsed = await parseNiktoOutput(raw); // ← await added
 
         if (parsed.length > 0) {
           await Vulnerability.insertMany(

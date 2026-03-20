@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import { enrichVulnWithCVE } from "./cveLookup.js";
 
 export const runNiktoScan = (target) => {
   return new Promise((resolve, reject) => {
@@ -6,7 +7,6 @@ export const runNiktoScan = (target) => {
       target = `http://${target}`;
     }
 
-    // Extract host and port separately for nikto
     const url = new URL(target);
     const host = url.hostname;
     const port = url.port || "80";
@@ -24,10 +24,9 @@ export const runNiktoScan = (target) => {
   });
 };
 
-export const parseNiktoOutput = (data) => {
+export const parseNiktoOutput = async (data) => {
   if (!data) return [];
 
-  // Lines to skip - informational/noise lines
   const skipPatterns = [
     "Target IP",
     "Target Hostname",
@@ -43,7 +42,7 @@ export const parseNiktoOutput = (data) => {
     "------",
   ];
 
-  return data
+  const results = data
     .split("\n")
     .filter((line) => {
       const trimmed = line.trim();
@@ -54,23 +53,19 @@ export const parseNiktoOutput = (data) => {
     .map((line) => {
       const clean = line.replace("+ ", "").trim();
 
-      // Extract templateId from [XXXXXX] pattern
       const idMatch = clean.match(/^\[(\w+)\]/);
       const templateId = idMatch ? idMatch[1] : "";
 
-      // Extract URL from pattern like /path/:
       const urlMatch = clean.match(/\s(\/[^\s:]+):/);
       const url = urlMatch ? `http://target${urlMatch[1]}` : "";
 
-      // Extract reference link
       const refMatch = clean.match(/See:\s+(https?:\/\/\S+)/);
       const reference = refMatch ? [refMatch[1]] : [];
 
-      // Determine severity based on nikto ID ranges
       let severity = "medium";
       if (templateId) {
         const id = parseInt(templateId);
-        if (id >= 600000) severity = "high"; // outdated software
+        if (id >= 600000) severity = "high";
         if (clean.toLowerCase().includes("xss")) severity = "high";
         if (clean.toLowerCase().includes("sql")) severity = "high";
         if (clean.toLowerCase().includes("rce")) severity = "critical";
@@ -93,4 +88,11 @@ export const parseNiktoOutput = (data) => {
       };
     })
     .filter((v) => v.name.length > 0);
+
+  // Enrich with CVE data in parallel
+  const enriched = await Promise.all(
+    results.map((vuln) => enrichVulnWithCVE(vuln)),
+  );
+
+  return enriched;
 };
