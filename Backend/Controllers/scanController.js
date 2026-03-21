@@ -31,20 +31,20 @@ const SUPPORTED_TOOLS = [
 export const startScan = async (req, res) => {
   try {
     const { targetId, tool, options } = req.body;
+    const userId = req.user.id;
 
     if (!targetId || !tool) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const targetDoc = await Target.findById(targetId);
+    // Only find target belonging to this user
+    const targetDoc = await Target.findOne({ _id: targetId, userId });
     if (!targetDoc) {
       return res.status(404).json({ message: "Target not found" });
     }
 
     const target = targetDoc.url || targetDoc.ip;
 
-    // For nmap, validate IP or FQDN
-    // For web tools, allow URLs too
     const isWebTool = ["nuclei", "nikto", "whatweb", "sslyze"].includes(tool);
     const cleanTarget = target
       .replace("http://", "")
@@ -63,8 +63,9 @@ export const startScan = async (req, res) => {
       return res.status(400).json({ message: "Tool not supported yet" });
     }
 
-    // Create scan record
+    // Create scan with userId
     const scan = await Scan.create({
+      userId,
       targetId,
       target,
       scanTool: tool,
@@ -72,7 +73,6 @@ export const startScan = async (req, res) => {
       status: "running",
     });
 
-    // Send response immediately — scan runs in background
     res.status(200).json({
       message: "Scan started",
       scanId: scan._id,
@@ -124,17 +124,17 @@ export const startScan = async (req, res) => {
     // --------------------------
     // NUCLEI SCAN
     // --------------------------
-    // ---- NUCLEI SCAN ----
     if (tool === "nuclei") {
       try {
         const nucleiRaw = await runNucleiScan(target);
-        const parsed = await parseNucleiOutput(nucleiRaw); // ← await added
+        const parsed = await parseNucleiOutput(nucleiRaw);
 
         if (parsed.length > 0) {
           await Vulnerability.insertMany(
             parsed.map((v) => ({
               ...v,
               scanId: scan._id,
+              userId,
               target,
               tool: "nuclei",
             })),
@@ -157,13 +157,14 @@ export const startScan = async (req, res) => {
     if (tool === "nikto") {
       try {
         const raw = await runNiktoScan(target);
-        const parsed = await parseNiktoOutput(raw); // ← await added
+        const parsed = await parseNiktoOutput(raw);
 
         if (parsed.length > 0) {
           await Vulnerability.insertMany(
             parsed.map((v) => ({
               ...v,
               scanId: scan._id,
+              userId,
               target,
               tool: "nikto",
             })),
@@ -245,12 +246,13 @@ export const startScan = async (req, res) => {
 export const getScanById = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
 
     if (!id || id === "undefined") {
       return res.status(400).json({ message: "Invalid scan ID" });
     }
 
-    const scan = await Scan.findById(id);
+    const scan = await Scan.findOne({ _id: id, userId });
     if (!scan) {
       return res.status(404).json({ message: "Scan not found" });
     }
@@ -269,7 +271,7 @@ export const getScanById = async (req, res) => {
 
 export const getAllScans = async (req, res) => {
   try {
-    const scans = await Scan.find()
+    const scans = await Scan.find({ userId: req.user.id })
       .sort({ createdAt: -1 })
       .select("_id target scanTool scanMode status createdAt");
 
@@ -283,17 +285,17 @@ export const getAllScans = async (req, res) => {
 export const deleteScan = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
 
     if (!id || id === "undefined") {
       return res.status(400).json({ message: "Invalid scan ID" });
     }
 
-    const scan = await Scan.findByIdAndDelete(id);
+    const scan = await Scan.findOneAndDelete({ _id: id, userId });
     if (!scan) {
       return res.status(404).json({ message: "Scan not found" });
     }
 
-    // Also delete all vulnerabilities for this scan
     await Vulnerability.deleteMany({ scanId: id });
 
     res.status(200).json({ message: "Scan deleted successfully" });
