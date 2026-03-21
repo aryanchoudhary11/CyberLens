@@ -7,6 +7,7 @@ import dashboardRoutes from "./Routes/dashboardRoutes.js";
 import targetRoutes from "./Routes/targetRoutes.js";
 import scanRoutes from "./Routes/ScanRoutes.js";
 import { protect } from "./Middleware/authMiddleware.js";
+import aiRoutes from "./Routes/aiRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", protect, dashboardRoutes);
 app.use("/api/targets", protect, targetRoutes);
 app.use("/api/scan", protect, scanRoutes);
+app.use("/api/ai", protect, aiRoutes);
 
 connectDB();
 

@@ -7,19 +7,23 @@ import EditProfile from "./pages/EditProfile";
 import ContactSupport from "./Pages/ContactSupport";
 import ScanResults from "./Pages/ScanResults";
 import ScanHistoryPage from "./Pages/ScanHistory";
+import AIChatbot from "./Components/AIChatbot";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/targets" element={<Targets />} />
-      <Route path="/edit-profile" element={<EditProfile />} />
-      <Route path="/contact-support" element={<ContactSupport />} />
-      <Route path="/scan/:id" element={<ScanResults />} />
-      <Route path="/scans" element={<ScanHistoryPage />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/targets" element={<Targets />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/contact-support" element={<ContactSupport />} />
+        <Route path="/scan/:id" element={<ScanResults />} />
+        <Route path="/scans" element={<ScanHistoryPage />} />
+      </Routes>
+      <AIChatbot />
+    </>
   );
 }
 
