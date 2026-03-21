@@ -40,6 +40,8 @@ export const parseNiktoOutput = async (data) => {
     "Scan terminated",
     "Nikto v",
     "------",
+    "out of date",
+    "installation is",
   ];
 
   const results = data

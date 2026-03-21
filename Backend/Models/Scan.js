@@ -2,15 +2,17 @@ import mongoose from "mongoose";
 
 const scanSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Target",
       required: true,
     },
-    target: {
-      type: String,
-      required: true,
-    },
+    target: { type: String, required: true },
     scanTool: {
       type: String,
       enum: ["nmap", "nuclei", "nikto", "whatweb", "subfinder", "sslyze"],
@@ -21,29 +23,9 @@ const scanSchema = new mongoose.Schema(
       enum: ["fast", "service", "full"],
       default: null,
     },
-
-    // Nmap results
-    openPorts: [
-      {
-        port: Number,
-        service: String,
-        version: String,
-      },
-    ],
-
-    // WhatWeb results
-    technologies: [
-      {
-        name: String,
-        version: String,
-        category: String,
-      },
-    ],
-
-    // Subfinder results
+    openPorts: [{ port: Number, service: String, version: String }],
+    technologies: [{ name: String, version: String, category: String }],
     subdomains: [String],
-
-    // SSLyze results
     sslInfo: {
       grade: String,
       protocol: String,
@@ -51,10 +33,7 @@ const scanSchema = new mongoose.Schema(
       expiry: Date,
       issues: [String],
     },
-
-    rawOutput: {
-      type: String,
-    },
+    rawOutput: { type: String },
     status: {
       type: String,
       enum: ["pending", "running", "completed", "failed"],
