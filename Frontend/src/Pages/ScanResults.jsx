@@ -367,6 +367,7 @@ export default function ScanResults() {
           )}
 
           {/* ---- SUBFINDER ---- */}
+          {/* ---- SUBFINDER ---- */}
           {scan.scanTool === "subfinder" && (
             <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
               <h2 className="text-lg font-semibold mb-4">
@@ -375,7 +376,21 @@ export default function ScanResults() {
                   ({scan.subdomains?.length || 0} found)
                 </span>
               </h2>
-              {!scan.subdomains || scan.subdomains.length === 0 ? (
+
+              {/* Check if target is an IP address */}
+              {/^(\d{1,3}\.){3}\d{1,3}$/.test(scan.target) ? (
+                <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 text-yellow-400 text-sm">
+                  ⚠️ Subfinder requires a domain name to discover subdomains.
+                  <br />
+                  <span className="text-gray-400 text-xs mt-1 block">
+                    Target{" "}
+                    <span className="text-white font-mono">{scan.target}</span>{" "}
+                    is an IP address. Try adding a domain target like{" "}
+                    <span className="text-white font-mono">example.com</span>{" "}
+                    instead.
+                  </span>
+                </div>
+              ) : !scan.subdomains || scan.subdomains.length === 0 ? (
                 <p className="text-gray-400">No subdomains found.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto pr-1">

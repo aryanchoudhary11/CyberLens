@@ -16,6 +16,14 @@ const targetSchema = new mongoose.Schema(
       enum: ["verified", "unverified"],
       default: "unverified",
     },
+    riskScore: { type: Number, default: 0 }, // ← add this
+    riskLevel: {
+      // ← add this
+      type: String,
+      enum: ["none", "low", "medium", "high", "critical"],
+      default: "none",
+    },
+    lastScanned: { type: Date, default: null }, // ← add this
   },
   { timestamps: true },
 );

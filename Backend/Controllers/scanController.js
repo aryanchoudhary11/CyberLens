@@ -12,6 +12,7 @@ import {
 } from "../utils/subfinderScanner.js";
 import { runSSLyzeScan, parseSSLyzeOutput } from "../utils/sslyzeScanner.js";
 import Vulnerability from "../Models/Vulnerability.js";
+import { updateTargetRisk } from "../utils/riskScoring.js";
 
 const nmapModes = {
   fast: ["-F"],
@@ -37,7 +38,6 @@ export const startScan = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Only find target belonging to this user
     const targetDoc = await Target.findOne({ _id: targetId, userId });
     if (!targetDoc) {
       return res.status(404).json({ message: "Target not found" });
@@ -63,7 +63,6 @@ export const startScan = async (req, res) => {
       return res.status(400).json({ message: "Tool not supported yet" });
     }
 
-    // Create scan with userId
     const scan = await Scan.create({
       userId,
       targetId,
@@ -73,10 +72,7 @@ export const startScan = async (req, res) => {
       status: "running",
     });
 
-    res.status(200).json({
-      message: "Scan started",
-      scanId: scan._id,
-    });
+    res.status(200).json({ message: "Scan started", scanId: scan._id });
 
     // --------------------------
     // NMAP SCAN
@@ -114,6 +110,8 @@ export const startScan = async (req, res) => {
             rawOutput: stdout,
             status: "completed",
           });
+
+          await updateTargetRisk(targetId, target, userId);
         } catch (err) {
           console.error("Nmap parse error:", err);
           await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -129,12 +127,16 @@ export const startScan = async (req, res) => {
         const nucleiRaw = await runNucleiScan(target);
         const parsed = await parseNucleiOutput(nucleiRaw);
 
+        // Replace old nuclei vulns for this target
+        await Vulnerability.deleteMany({ target, tool: "nuclei", userId });
+
         if (parsed.length > 0) {
           await Vulnerability.insertMany(
             parsed.map((v) => ({
               ...v,
               scanId: scan._id,
               userId,
+              targetId,
               target,
               tool: "nuclei",
             })),
@@ -145,6 +147,8 @@ export const startScan = async (req, res) => {
           rawOutput: nucleiRaw,
           status: "completed",
         });
+
+        await updateTargetRisk(targetId, target, userId);
       } catch (error) {
         console.error("Nuclei scan failed:", error);
         await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -159,12 +163,16 @@ export const startScan = async (req, res) => {
         const raw = await runNiktoScan(target);
         const parsed = await parseNiktoOutput(raw);
 
+        // Replace old nikto vulns for this target
+        await Vulnerability.deleteMany({ target, tool: "nikto", userId });
+
         if (parsed.length > 0) {
           await Vulnerability.insertMany(
             parsed.map((v) => ({
               ...v,
               scanId: scan._id,
               userId,
+              targetId,
               target,
               tool: "nikto",
             })),
@@ -175,6 +183,8 @@ export const startScan = async (req, res) => {
           rawOutput: raw,
           status: "completed",
         });
+
+        await updateTargetRisk(targetId, target, userId);
       } catch (error) {
         console.error("Nikto scan failed:", error);
         await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -194,6 +204,8 @@ export const startScan = async (req, res) => {
           rawOutput: raw,
           status: "completed",
         });
+
+        await updateTargetRisk(targetId, target, userId);
       } catch (error) {
         console.error("WhatWeb scan failed:", error);
         await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -213,6 +225,8 @@ export const startScan = async (req, res) => {
           rawOutput: raw,
           status: "completed",
         });
+
+        await updateTargetRisk(targetId, target, userId);
       } catch (error) {
         console.error("Subfinder scan failed:", error);
         await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -232,6 +246,8 @@ export const startScan = async (req, res) => {
           rawOutput: raw,
           status: "completed",
         });
+
+        await updateTargetRisk(targetId, target, userId);
       } catch (error) {
         console.error("SSLyze scan failed:", error);
         await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
@@ -259,10 +275,7 @@ export const getScanById = async (req, res) => {
 
     const vulnerabilities = await Vulnerability.find({ scanId: id });
 
-    res.status(200).json({
-      ...scan.toObject(),
-      vulnerabilities,
-    });
+    res.status(200).json({ ...scan.toObject(), vulnerabilities });
   } catch (error) {
     console.error("getScanById error:", error);
     res.status(500).json({ message: "Failed to fetch scan" });
@@ -296,7 +309,11 @@ export const deleteScan = async (req, res) => {
       return res.status(404).json({ message: "Scan not found" });
     }
 
+    // Delete vulnerabilities for this scan
     await Vulnerability.deleteMany({ scanId: id });
+
+    // Recalculate risk after deletion
+    await updateTargetRisk(scan.targetId, scan.target, userId);
 
     res.status(200).json({ message: "Scan deleted successfully" });
   } catch (error) {
