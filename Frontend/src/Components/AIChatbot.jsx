@@ -163,7 +163,7 @@ export default function AIChatbot() {
               >
                 {/* Avatar */}
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1 ${
                     msg.role === "user" ? "bg-blue-600" : "bg-gray-700"
                   }`}
                 >
@@ -190,7 +190,7 @@ export default function AIChatbot() {
             {/* Typing indicator */}
             {loading && (
               <div className="flex gap-2">
-                <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center shrink-0">
                   <Bot size={13} className="text-blue-400" />
                 </div>
                 <div className="bg-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm">
@@ -252,7 +252,7 @@ export default function AIChatbot() {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || loading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white p-2.5 rounded-xl transition flex-shrink-0"
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white p-2.5 rounded-xl transition shrink-0"
               >
                 <Send size={16} />
               </button>

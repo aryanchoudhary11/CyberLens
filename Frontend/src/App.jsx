@@ -1,10 +1,9 @@
 import { Routes, Route } from "react-router-dom";
+import HomePage from "./Pages/HomePage";
 import LoginPage from "./Pages/LoginPage";
 import RegisterPage from "./Pages/RegisterPage";
 import DashboardPage from "./Pages/Dashboard";
 import Targets from "./Pages/Targets";
-import EditProfile from "./pages/EditProfile";
-import ContactSupport from "./Pages/ContactSupport";
 import ScanResults from "./Pages/ScanResults";
 import ScanHistoryPage from "./Pages/ScanHistory";
 import AIChatbot from "./Components/AIChatbot";
@@ -13,12 +12,11 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/targets" element={<Targets />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/contact-support" element={<ContactSupport />} />
         <Route path="/scan/:id" element={<ScanResults />} />
         <Route path="/scans" element={<ScanHistoryPage />} />
       </Routes>
