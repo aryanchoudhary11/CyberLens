@@ -155,6 +155,12 @@ export default function HomePage() {
             >
               Tools
             </button>
+            <button
+              onClick={() => navigate("/contact")}
+              className="hover:text-white transition"
+            >
+              Contact
+            </button>
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -214,6 +220,12 @@ export default function HomePage() {
               className="block text-gray-400 hover:text-white text-sm"
             >
               Tools
+            </button>
+            <button
+              onClick={() => navigate("/contact")}
+              className="block text-gray-400 hover:text-white text-sm"
+            >
+              Contact
             </button>
             <div className="flex gap-3 pt-2">
               {isLoggedIn ? (
@@ -542,6 +554,12 @@ export default function HomePage() {
               className="hover:text-white transition"
             >
               How it Works
+            </button>
+            <button
+              onClick={() => navigate("/contact")}
+              className="hover:text-white transition"
+            >
+              Contact
             </button>
           </div>
         </div>

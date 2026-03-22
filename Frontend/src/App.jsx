@@ -7,6 +7,7 @@ import Targets from "./Pages/Targets";
 import ScanResults from "./Pages/ScanResults";
 import ScanHistoryPage from "./Pages/ScanHistory";
 import AIChatbot from "./Components/AIChatbot";
+import ContactSupport from "./Pages/ContactPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/targets" element={<Targets />} />
         <Route path="/scan/:id" element={<ScanResults />} />
         <Route path="/scans" element={<ScanHistoryPage />} />
+        <Route path="/contact" element={<ContactSupport />} />
       </Routes>
       <AIChatbot />
     </>
