@@ -3,23 +3,69 @@ import LoginPage from "./Pages/LoginPage";
 import RegisterPage from "./Pages/RegisterPage";
 import DashboardPage from "./Pages/Dashboard";
 import Targets from "./Pages/Targets";
-import EditProfile from "./pages/EditProfile";
-import ContactSupport from "./Pages/ContactSupport";
+
+import ContactPage from "./Pages/ContactPage";
 import ScanResults from "./Pages/ScanResults";
 import ScanHistoryPage from "./Pages/ScanHistory";
+import AIChatbot from "./Components/AIChatbot";
+import HomePage from "./Pages/HomePage";
+import SettingsPage from "./Pages/SettingsPage";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/targets" element={<Targets />} />
-      <Route path="/edit-profile" element={<EditProfile />} />
-      <Route path="/contact-support" element={<ContactSupport />} />
-      <Route path="/scan/:id" element={<ScanResults />} />
-      <Route path="/scans" element={<ScanHistoryPage />} />
-    </Routes>
+    <>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/targets"
+          element={
+            <ProtectedRoute>
+              <Targets />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scans"
+          element={
+            <ProtectedRoute>
+              <ScanHistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scan/:id"
+          element={
+            <ProtectedRoute>
+              <ScanResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+      <AIChatbot />
+    </>
   );
 }
 

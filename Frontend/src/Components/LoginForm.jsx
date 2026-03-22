@@ -74,13 +74,6 @@ export default function LoginForm() {
       {message && (
         <p className="text-center text-sm text-gray-300 mt-2">{message}</p>
       )}
-
-      <p className="text-center text-sm text-gray-400 mt-3">
-        Don’t have an account?{" "}
-        <Link to="/register" className="text-blue-500 hover:underline">
-          Register here.
-        </Link>
-      </p>
     </form>
   );
 }

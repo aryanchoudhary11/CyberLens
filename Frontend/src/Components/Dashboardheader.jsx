@@ -7,11 +7,6 @@ export default function DashboardHeader() {
           Welcome back, {localStorage.getItem("username") || "Admin"}!
         </p>
       </div>
-      <div className="flex gap-3 mt-4 sm:mt-0">
-        <button className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg">
-          View Reports
-        </button>
-      </div>
     </div>
   );
 }
