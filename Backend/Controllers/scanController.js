@@ -15,9 +15,9 @@ import Vulnerability from "../Models/Vulnerability.js";
 import { updateTargetRisk } from "../utils/riskScoring.js";
 
 const nmapModes = {
-  fast: ["-F"],
-  service: ["-sV"],
-  full: ["-sV", "-O", "-p-"],
+  fast: ["-sT", "-F"], // TCP connect scan, no raw socket needed
+  service: ["-sT", "-sV"], // TCP connect + service detection
+  full: ["-sT", "-sV", "-p-"], // Full TCP connect scan
 };
 
 const SUPPORTED_TOOLS = [
