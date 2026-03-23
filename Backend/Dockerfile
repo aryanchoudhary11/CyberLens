@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
+# Give nmap the capabilities it needs
+RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap || true
+
 # Install Nikto manually from GitHub
 RUN git clone https://github.com/sullo/nikto.git /opt/nikto \
     && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto \
