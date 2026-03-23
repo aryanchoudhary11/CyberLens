@@ -86,37 +86,50 @@ export const startScan = async (req, res) => {
         return;
       }
 
-      execFile("nmap", [...nmapArgs, cleanTarget], async (error, stdout) => {
-        try {
-          if (error) {
-            await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
-            return;
-          }
+      console.log(
+        `Starting nmap scan on: ${cleanTarget} with args: ${nmapArgs}`,
+      );
 
-          const openPorts = stdout
-            .split("\n")
-            .filter((line) => line.includes("/tcp") && line.includes("open"))
-            .map((line) => {
-              const parts = line.trim().split(/\s+/);
-              return {
-                port: parseInt(parts[0]),
-                service: parts[2],
-                version: parts.slice(3).join(" ") || "",
-              };
+      execFile(
+        "nmap",
+        [...nmapArgs, cleanTarget],
+        async (error, stdout, stderr) => {
+          try {
+            console.log("Nmap stdout:", stdout);
+            console.log("Nmap stderr:", stderr);
+            console.log("Nmap error:", error);
+
+            if (error) {
+              console.error("Nmap failed:", error.message);
+              await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
+              return;
+            }
+
+            const openPorts = stdout
+              .split("\n")
+              .filter((line) => line.includes("/tcp") && line.includes("open"))
+              .map((line) => {
+                const parts = line.trim().split(/\s+/);
+                return {
+                  port: parseInt(parts[0]),
+                  service: parts[2],
+                  version: parts.slice(3).join(" ") || "",
+                };
+              });
+
+            await Scan.findByIdAndUpdate(scan._id, {
+              openPorts,
+              rawOutput: stdout,
+              status: "completed",
             });
 
-          await Scan.findByIdAndUpdate(scan._id, {
-            openPorts,
-            rawOutput: stdout,
-            status: "completed",
-          });
-
-          await updateTargetRisk(targetId, target, userId);
-        } catch (err) {
-          console.error("Nmap parse error:", err);
-          await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
-        }
-      });
+            await updateTargetRisk(targetId, target, userId);
+          } catch (err) {
+            console.error("Nmap parse error:", err);
+            await Scan.findByIdAndUpdate(scan._id, { status: "failed" });
+          }
+        },
+      );
     }
 
     // --------------------------
