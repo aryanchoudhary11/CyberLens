@@ -273,10 +273,9 @@ export default function HomePage() {
             AI-Powered Vulnerability Assessment Platform
           </div>
 
-          {/* Headline */}
           <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
             Secure Your
-            <span className="block bg-linear-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
               Digital Assets
             </span>
             with Precision
