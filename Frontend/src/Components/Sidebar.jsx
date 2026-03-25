@@ -96,7 +96,6 @@ export default function Sidebar() {
 
         {/* Bottom Section */}
         <div className="space-y-3">
-          {/* Settings — now navigates to /settings */}
           <div
             onClick={() => {
               navigate("/settings");

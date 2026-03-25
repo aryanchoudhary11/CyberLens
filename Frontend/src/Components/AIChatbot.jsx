@@ -55,7 +55,7 @@ export default function AIChatbot() {
         },
         body: JSON.stringify({
           messages: updatedMessages
-            .filter((_, i) => i > 0) // skip welcome message
+            .filter((_, i) => i > 0)
             .map((m) => ({ role: m.role, content: m.content })),
         }),
       });
@@ -99,7 +99,6 @@ export default function AIChatbot() {
   const formatMessage = (content) => {
     const lines = content.split("\n");
     return lines.map((line, i) => {
-      // Bold text between **
       const parts = line.split(/\*\*(.*?)\*\*/g);
       return (
         <span key={i}>

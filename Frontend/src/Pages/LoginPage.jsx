@@ -11,7 +11,6 @@ export default function LoginPage() {
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
-    // In real app, send reset email via backend
     setSubmitted(true);
   };
 

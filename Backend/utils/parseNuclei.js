@@ -38,7 +38,6 @@ export const parseNucleiOutput = async (data) => {
     }
   }
 
-  // Enrich all vulnerabilities with CVE data in parallel
   const enriched = await Promise.all(
     results.map((vuln) => enrichVulnWithCVE(vuln)),
   );

@@ -10,10 +10,9 @@ export const runSSLyzeScan = (target) => {
     const command = `python3 -m sslyze ${domain} --json_out /tmp/sslyze-out.json`;
 
     exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
-      // SSLyze writes to file, read it
       exec("cat /tmp/sslyze-out.json", (err2, out2) => {
         if (err2) {
-          resolve(""); // SSL might not be available on target
+          resolve("");
           return;
         }
         resolve(out2 || "");
@@ -29,7 +28,6 @@ export const parseSSLyzeOutput = (data) => {
     const result = json?.server_scan_results?.[0];
     const issues = [];
 
-    // Check for common SSL issues
     const tlsResult = result?.scan_result?.tls_1_0_cipher_suites;
     if (tlsResult?.result?.accepted_cipher_suites?.length > 0) {
       issues.push("TLS 1.0 supported (deprecated)");

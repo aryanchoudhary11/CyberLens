@@ -91,7 +91,6 @@ export const parseNiktoOutput = async (data) => {
     })
     .filter((v) => v.name.length > 0);
 
-  // Enrich with CVE data in parallel
   const enriched = await Promise.all(
     results.map((vuln) => enrichVulnWithCVE(vuln)),
   );

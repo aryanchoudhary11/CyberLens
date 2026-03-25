@@ -140,7 +140,6 @@ export const startScan = async (req, res) => {
         const nucleiRaw = await runNucleiScan(target);
         const parsed = await parseNucleiOutput(nucleiRaw);
 
-        // Replace old nuclei vulns for this target
         await Vulnerability.deleteMany({ target, tool: "nuclei", userId });
 
         if (parsed.length > 0) {
@@ -176,7 +175,6 @@ export const startScan = async (req, res) => {
         const raw = await runNiktoScan(target);
         const parsed = await parseNiktoOutput(raw);
 
-        // Replace old nikto vulns for this target
         await Vulnerability.deleteMany({ target, tool: "nikto", userId });
 
         if (parsed.length > 0) {
@@ -322,10 +320,8 @@ export const deleteScan = async (req, res) => {
       return res.status(404).json({ message: "Scan not found" });
     }
 
-    // Delete vulnerabilities for this scan
     await Vulnerability.deleteMany({ scanId: id });
 
-    // Recalculate risk after deletion
     await updateTargetRisk(scan.targetId, scan.target, userId);
 
     res.status(200).json({ message: "Scan deleted successfully" });
