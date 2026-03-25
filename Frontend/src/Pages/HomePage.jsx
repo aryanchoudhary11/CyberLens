@@ -462,7 +462,7 @@ export default function HomePage() {
               <div key={i} className="relative">
                 {/* Connector line */}
                 {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-linear-to-r from-blue-500/50 to-transparent z-10" />
+                  <div className="hidden lg:block absolute top-8 left-full w-32 h-[2px] bg-gradient-to-r from-blue-500 via-cyan-400 to-transparent opacity-80 z-20" />
                 )}
                 <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:border-blue-500/30 transition">
                   <div className="text-3xl mb-3">{step.icon}</div>

@@ -28,8 +28,6 @@ export const parseWhatWebOutput = (data) => {
   try {
     const technologies = [];
 
-    // WhatWeb wraps all entries in one big array
-    // Parse the whole thing as one JSON array
     const cleaned = data.trim();
     const arr = JSON.parse(cleaned);
 

@@ -15,18 +15,15 @@ export const runSubfinderScan = (target) => {
       return;
     }
 
-    // Use Linux timeout command to force kill after 90 seconds
     const command = `timeout 90s subfinder -d ${domain} -silent -timeout 20 -max-time 80`;
 
     exec(
       command,
       {
         maxBuffer: 1024 * 1024 * 50,
-        timeout: 100000, // Node kills after 100s as backup
+        timeout: 100000,
       },
       (error, stdout) => {
-        // timeout command exits with code 124 when it kills the process
-        // We still want whatever output was collected
         if (stdout && stdout.length > 0) {
           resolve(stdout);
         } else {

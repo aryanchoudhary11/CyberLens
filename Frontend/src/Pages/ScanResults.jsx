@@ -375,7 +375,6 @@ export default function ScanResults() {
           )}
 
           {/* ---- SUBFINDER ---- */}
-          {/* ---- SUBFINDER ---- */}
           {scan.scanTool === "subfinder" && (
             <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
               <h2 className="text-lg font-semibold mb-4">

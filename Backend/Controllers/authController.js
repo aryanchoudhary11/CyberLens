@@ -108,7 +108,6 @@ export const updateUsername = async (req, res) => {
       { new: true },
     ).select("-password");
 
-    // Generate new token with updated username
     const token = jwt.sign(
       { id: user._id, username: user.username },
       process.env.JWT_SECRET,
