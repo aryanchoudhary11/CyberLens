@@ -132,21 +132,18 @@ export default function ScanResults() {
         )}
       </div>
 
-      {/* RUNNING */}
       {scan.status === "running" && (
         <div className="bg-gray-900 border border-yellow-700 rounded-xl p-6 text-yellow-400 text-center mb-6">
           ⏳ Scan is still running... Auto-refreshing every 3 seconds.
         </div>
       )}
 
-      {/* FAILED */}
       {scan.status === "failed" && (
         <div className="bg-gray-900 border border-red-700 rounded-xl p-6 text-red-400 text-center mb-6">
           ❌ Scan failed. Please try again.
         </div>
       )}
 
-      {/* COMPLETED */}
       {scan.status === "completed" && (
         <>
           {/* ---- NMAP ---- */}
@@ -158,7 +155,18 @@ export default function ScanResults() {
                   ({scan.openPorts?.length || 0} found)
                 </span>
               </h2>
-              {scan.openPorts?.length === 0 ? (
+
+              {scan.status === "failed" ? (
+                <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 text-yellow-400 text-sm">
+                  ⚠️ Nmap scanning requires raw socket access which is
+                  restricted on cloud deployments.
+                  <br />
+                  <span className="text-gray-400 text-xs mt-1 block">
+                    For full port scanning functionality, use the self-hosted
+                    version.
+                  </span>
+                </div>
+              ) : scan.openPorts?.length === 0 ? (
                 <p className="text-gray-400">No open ports found.</p>
               ) : (
                 <table className="w-full text-left">
